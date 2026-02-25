@@ -1,6 +1,6 @@
 # Project_TaskFlow
 TaskFlow est une application web complète de gestion de tâches qui permet aux utilisateurs de créer, organiser et suivre leurs tâches quotidiennes. 
 
-Répartition des roles:
-Leslie — Architecture + Documentation + Frontend
-Sandra — Backend + Base de données + Authentification
+## Répartition des roles:
+**Leslie — Architecture + Documentation + Frontend**
+**Sandra — Backend + Base de données + Authentification**
