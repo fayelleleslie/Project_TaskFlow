@@ -73,9 +73,7 @@ l'application devra garantir:
 les couches de notre architecture sont les suivantes:
 
 - Front-end: Composants React modulaires, pages(login,dashboard,tasks), gestion de l'état global, communication HTTP avec l'API.
-
 - Back-end: Configuration, Controleurs, services(logique métier), middleware(authentification,validation), gestions des erreurs, models, routes
-
 - Base de données: Modèlisation de données, repositories, base de données relationnelle
 
 Voici un schéma logique démonstratif:
@@ -146,7 +144,7 @@ les technologies proposées sont les suivantes:
 
 **Table: tasks**
 
-|| Champ | Type | Description |
+| Champ | Type | Description |
 |-------|------|-------------|
 | id | INT | Identifiant unique |
 | user_id | INT (FK) | Référence à l'utilisateur |
@@ -156,7 +154,6 @@ les technologies proposées sont les suivantes:
 | status | BOOLEAN | Terminé ou non |
 | created_at | DATE | Date de création automatique |
 
----
 
 ## **8. Endpoints de l'API**
 
