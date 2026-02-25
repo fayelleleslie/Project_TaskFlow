@@ -10,32 +10,33 @@ Les principaux objectifs du projet sont:
 
 - Appliquer les principes d'architecture full stack
 - Mise en place d'une architecture 3 tiers
-- Définir une API REST
+- Définir une API REST Sécurisée
 - Séparer clairement les différentes responsabilités
 - Produire une documentation de conception détaillée
 - Définir les flux de données et responsabilités 
+- Gérer l'Interface Responsive
+- Gestion de la base de données
+- Gestion de l'authentification de la sécuritée
 
 ## **3. Besoins Fonctionnels**
 
-l'application doit permettre à l'utilisateur de:
+### **1. Authentification**
+ 
+- Création d'un compte
+- Connection sécurisée
+- Déconnexion sécurisée
+- Protection des routes(accès uniquement aux tâches de l'utilisateur connecté)
 
-- Créer une nouvelle tache
-- Renseigner un titre
-- Ajouter une description
-- Définir une priorité
-- Enregistrer automatiquement la date de création
-- Modifier le titre d'une tache
-- Modifier la description d'une tache
-- Changer la priorité d'une tache
-- Mettre à jour son statut (terminé / non terminé)
+### **2. Gestion des taches**
 
-Afin de bien structurer les données, le serveur devra permettre de:
-
-- Afficher la liste compléte des taches
-- Avoir une vue globale sur les détails d'une tache
-- Consulter les taches selon leur statut
-- Supprimer une tache existante
-- Confirmer l'action avant suppression
+- Créer une tâche avec titre, description, priorité, date de création automatique
+- Modifier une tâche (titre, description, priorité, statut)
+- Supprimer une tâche avec confirmation
+- Afficher la liste complète des tâches
+- Consulter le détail d'une tâche
+- Filtrer par statut
+- Rechercher par mot-clé
+- Notifications et rappels
 
 ## **4. Besoins Non-Fonctionnels**
 
@@ -58,6 +59,10 @@ l'application devra garantir:
 - Respecter un modèle client/serveur
 - Avoir une communication sécurisée
 - Etre accessible sur un navigateur web 
+- Sécurité des sessions
+- Cohérence des données
+- Performance du système
+- Versionage
 - Etre accessible sur différent système d'exploitation
 - Avoir une structure de projet organisée
 - Faire une séparation claire entre frontend et backend
@@ -65,24 +70,26 @@ l'application devra garantir:
 
 ## **6. Architecture du système**
 
-les couches de notre architecture seont les suivantes:
+les couches de notre architecture sont les suivantes:
 
-- Frontend: pour l'interface utilisateur
-- Backend: pour l'API REST
-- Base de données: pour le stockage des informatio    ns
+- Front-end: Composants React modulaires, pages(login,dashboard,tasks), gestion de l'état global, communication HTTP avec l'API.
+
+- Back-end: Configuration, Controleurs, services(logique métier), middleware(authentification,validation), gestions des erreurs, models, routes
+
+- Base de données: Modèlisation de données, repositories, base de données relationnelle
 
 Voici un schéma logique démonstratif:
 
 Utilisateur 
     |
     v
-Front-end (React)
+Front-end (React.js)
     |API REST
     v
-Back-end (Node)
+Back-end (Node.js)
     |
     v
-Base de données (MySQL / PostgreSQL)
+Base de données (MongoDB)
 
 
 ### **6.1 Choix des technologies**
@@ -93,9 +100,10 @@ les technologies proposées sont les suivantes:
 |--------|-------------|
 | Frontend | React.js |
 | Backend | Node.js |
-| Base de données | MySQL / PostgreSQL |
+| Base de données | MongoDB |
+| Authentification | JWT |
 | Communication | API REST |
-| Versionning | Git |
+| Versioning | Git |
 
 ### **6.2 Responsabilités de chaque composants**
 
@@ -126,27 +134,48 @@ les technologies proposées sont les suivantes:
 
 ## **7. Modélisation des données**
 
-**Table: tasks**
+**Table : users**
 
 | Champ | Type | Description |
 |-------|------|-------------|
 | id | INT | Identifiant unique |
-| title | VARCHAR | Titre de la tache |
+| email | VARCHAR | Email unique |
+| password_hash | VARCHAR | Mot de passe haché |
+| created_at | DATE | Date de création |
+
+
+**Table: tasks**
+
+|| Champ | Type | Description |
+|-------|------|-------------|
+| id | INT | Identifiant unique |
+| user_id | INT (FK) | Référence à l'utilisateur |
+| title | VARCHAR | Titre de la tâche |
 | description | TEXT | Description |
-| priority | ENUM | Priorité |
-| status | BOOLEAN | État de la tache |
-| created_ad | DATE | Date de création |
+| priority | ENUM | low / medium / high |
+| status | BOOLEAN | Terminé ou non |
+| created_at | DATE | Date de création automatique |
+
+---
 
 ## **8. Endpoints de l'API**
 
 les Endpoints principaux avec implémentation du CRUD sont les suivants:
 
-| CRUD | Méthode | URL | Action |
-|------|---------|-----|--------|
-| Create | POST | /tasks | Créer une tache |
-| Read | GET | /tasks | Récupérer/ lire les taches |
-| Update | PUT | /tasks/:id | Modifier une tache |
-|Delete | DELETE | /tasks/:id | Supprimer une tache |
+| CRUD | Méthode | URL | Action | Validation côté serveur |
+|------|---------|-----|--------|-------------------------|
+| Create | POST | /auth/register | Créer un compte | Username obligatoire (3–30 caractères), email obligatoire , password obligatoire (≥8 caractères, hashé avant stockage) |
+| Create | POST | /auth/login | Se connecter | mail obligatoire, password obligatoire, vérification existence utilisateur, comparaison mot de passe hashé |
+| Create | POST | /auth/logout | Se déconnecter | utilisateur authentifié requis, token/session valide, invalidation du token |
+| Create | POST | /tasks | Créer une tâche |utilisateur authentifié, title obligatoire (3–100 caractères), description ≤500 caractères, status appartient à {Non terminée, Terminée}, valeur par défaut = Non terminée | 
+| Read | GET | /tasks | Lire toutes les tâches | utilisateur authentifié, retourner uniquement les tâches du user connecté, pagination, limite max requêtes |
+| Read | GET | /tasks/:id | Lire une tâche | utilisateur authentifié, id valide (INT), tâche existe, appartient au user
+| Read | GET | /tasks?status= | Filtrer par statut | Utilisateur authentifié, id valide, tâche appartient au user |
+| Read | GET | /tasks?search= | Rechercher par mot-clé | Utilisateur authentifié |
+| Update | PUT | /tasks/:id | Modifier une tâche | Utilisateur authentifié, id valide, tâche appartient au user, validation champs modifiés |
+| Delete | DELETE | /tasks/:id | Supprimer une tâche | Utilisateur authentifié, id valide, tâche existe, appartient au user |
+
+---
 
 ## **9. Flux des données**
 
@@ -169,21 +198,22 @@ L’interface est mise à jour
 
 ## **10. Structure du projet**
 
-'''
-├── LICENSE
+```
 ├── README.md
-├── taskflow
-│   ├── backend
-│   │   ├── config
-│   │   ├── controllers
-│   │   ├── models
-│   │   └── routes
-│   └── frontend
-│       └── src
-│           ├── components
-│           ├── pages
-│           └── services
-'''
+├── taskflow/
+│   ├── backend/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   └── routes/
+│   └── frontend/
+│       └── src/
+│           ├── components/
+│           ├── pages/
+│           └── services/
+```
+---
 
 **Explication**
 
