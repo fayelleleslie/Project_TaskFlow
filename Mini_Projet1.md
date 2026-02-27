@@ -20,14 +20,14 @@ Les principaux objectifs du projet sont:
 
 ## **3. Besoins Fonctionnels**
 
-### **1. Authentification**
+### **3.1 Authentification**
  
 - Création d'un compte
 - Connection sécurisée
 - Déconnexion sécurisée
 - Protection des routes(accès uniquement aux tâches de l'utilisateur connecté)
 
-### **2. Gestion des taches**
+### **3.2 Gestion des taches**
 
 - Créer une tâche avec titre, description, priorité, date de création automatique
 - Modifier une tâche (titre, description, priorité, statut)
@@ -234,4 +234,4 @@ L’interface est mise à jour
 
 ## **11. Conclusion**
 
-Ce projet permet de conception architecturale permet de mettre en avant les bases d'un projet full stack.
+Ce projet nous permettra de concevoir, de developper et de maintenir des applications complétes front-end / back-end , sécurisées, performante et l'évolution en s'appuyant sur une architure cohérente.De ce fait, ce cahier des charges définira les fonctionnalitées essentielles pour garantir une gestion de tâches fluide et intuitive. Cependant, ce document servira de guide de référence tout au long du développement pour s'assurer que l'application finale réponde parfaitement aux besoins d'organisation et de productivité identifiés.
